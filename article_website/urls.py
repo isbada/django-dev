@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 # re_path支持路径正则
-from django.urls import path, re_path 
+from django.urls import path, re_path, include
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    re_path('`$',views.index),
+    # re_path('`$', views.index),
+    path('article/', include('article.urls')),
 ]
