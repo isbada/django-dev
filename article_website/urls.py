@@ -17,10 +17,11 @@ from django.contrib import admin
 # re_path支持路径正则
 from django.urls import path, re_path, include
 from . import views
+from blog.views import blog_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
     # re_path('`$', views.index),
-    # path('blog/', include('blog.urls')),
+    path('blog/', include('blog.urls')),
+    path('', blog_list, name='home'),
 ]
