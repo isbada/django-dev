@@ -21,9 +21,6 @@ class Blog(models.Model):
     def __str__(self):
         return f"<Blog: {self.title}>"
 
-
+    # 排序参数，按照某个顺序排序
     class Meta:
         ordering = ["-create_time"]
-
-
-
