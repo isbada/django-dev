@@ -37,9 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',  # 注册自己编辑的应用
     'ckeditor',
     'ckeditor_uploader',
+    'blog',  # 注册自己编辑的应用
+    'read_statistics',
+    
 ]
 
 MIDDLEWARE = [

@@ -38,7 +38,7 @@ active
                                 &nbsp;&nbsp;
                                 <span class="glyphicon glyphicon-time"></span> {{ blog.create_time|date:"Y-m-d" }}
                                 &nbsp;&nbsp;
-                                阅读({{ blog.readed_num }})
+                                阅读({{ blog.get_read_num }})
                             </p>
                             <p>{{ blog.content|striptags|truncatechars:120 }}</p>
                         </div>
