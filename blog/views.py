@@ -3,6 +3,7 @@ from .models import Blog, BlogType
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.db.models import Count
+from datetime import datetime
 
 
 def get_blog_list_common_data(request, blogs_all_list):
@@ -27,6 +28,7 @@ def get_blog_list_common_data(request, blogs_all_list):
     if page_range[-1] != paginator.num_pages:
         page_range.append(paginator.num_pages)
     '''
+    BlogType.objects.annotate(blog_count=Count('blog'))
     # 获取博客类型的数量, 并加入对象的属性
     blog_types = BlogType.objects.all()
     blog_type_list = []
@@ -41,6 +43,7 @@ def get_blog_list_common_data(request, blogs_all_list):
     context['blog_types'] = BlogType.objects.annotate(blog_count=Count('blog'))
     context['page_range'] = page_range
 
+    # 日期数量统计
     blog_dates = Blog.objects.dates('create_time', 'month', order='DESC')
     blog_dates_dict = {}
     for blog_date in blog_dates:
@@ -61,14 +64,23 @@ def blog_list(request):
 
 
 def blog_detail(request, blog_pk):
-    context = {}
+    
     blog = get_object_or_404(Blog, id=blog_pk)
+    if not request.COOKIES.get(f"blog_{blog_pk}_readed"):
+        blog.readed_num +=1
+        blog.save()
+
+
+    context = {}
     context['previous_blog'] = Blog.objects.filter(
         create_time__gt=blog.create_time).last()
     context['next_blog'] = Blog.objects.filter(
         create_time__lt=blog.create_time).first()
     context['blog'] = blog
-    return render_to_response('blog/blog_detail.html', context)
+
+    response = render_to_response('blog/blog_detail.html', context)
+    response.set_cookie(f"blog_{blog_pk}_readed",'true')
+    return response
 
 
 def blogs_with_type(request, blog_type_pk):
