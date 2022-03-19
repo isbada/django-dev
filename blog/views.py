@@ -72,7 +72,6 @@ def blog_detail(request, blog_pk):
     blog = get_object_or_404(Blog, id=blog_pk)
     read_cookie_key = read_statistics_once_read(request, blog)
         
-            
     context = {}
     context['previous_blog'] = Blog.objects.filter(
         create_time__gt=blog.create_time).last()
@@ -81,7 +80,7 @@ def blog_detail(request, blog_pk):
     context['blog'] = blog
 
     response = render(request, 'blog/blog_detail.html', context)
-    response.set_cookie(read_cookie_key,'true')
+    response.set_cookie(read_cookie_key, 'true')
     return response
 
 

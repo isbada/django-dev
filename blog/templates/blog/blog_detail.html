@@ -27,7 +27,7 @@
                 <ul class="blog-info-description">
                     <li>作者: {{ blog.author }}</li>
                     <li>分类: <a href="{% url 'blogs_with_type' blog.blog_type.pk %}">{{ blog.blog_type }}</a></li>    
-                    <li>发表日期: {{ blog.create_time|date:"Y-m-d H:n:s" }}</li>
+                    <li>发表日期: {{ blog.create_time|date:"Y-m-d H:i:s" }}</li>
                     <li>阅读({{ blog.get_read_num }})</li>
                 </ul>
                 <div class="blog-content">{{ blog.content|safe }}</div>
@@ -61,7 +61,8 @@
                         已登录
                     {% else %}
                         未登录
-                        <form action="提交网址" method="POST">
+                        <form action="{% url 'login' %}" method="POST">
+                            {% csrf_token %}
                             <input type="text" name="username">
                             <input type="password" name="password">
                             <input type="submit" value="登录">

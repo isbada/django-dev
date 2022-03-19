@@ -11,11 +11,13 @@ from django.http import HttpResponse
 from read_statistics.utils import get_seven_days_read_data, get_today_hot_data, get_yesterday_hot_data
 from django.contrib.contenttypes.models import ContentType
 from blog.models import Blog
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import datetime
 from django.utils import timezone
 from django.db.models import Sum
 from django.core.cache import cache
+from django.contrib import auth
+
 
 def get_7_days_hot_blogs():
     today = timezone.now().date()
@@ -28,7 +30,6 @@ def get_7_days_hot_blogs():
     return blogs[:7]
 
 
-
 def index(request):
     return HttpResponse("Hello, world!")
 
@@ -39,17 +40,16 @@ def home(request):
 
     # 获取七天热门博客的缓存数据
     hot_data_for_7days = cache.get('hot_data_for_7days')
-    if hot_data_for_7days is None :
+    if hot_data_for_7days is None:
         hot_data_for_7days = get_7_days_hot_blogs()
-        cache.set('hot_data_for_7days',hot_data_for_7days, 3600)
+        cache.set('hot_data_for_7days', hot_data_for_7days, 3600)
         print('calculate cache')
-
 
     context = {}
     context['dates'] = dates
     context['read_nums'] = read_nums
     context['today_hot_data'] = get_today_hot_data(blog_content_type)
-    context['yesterday_hot_data'] =  get_yesterday_hot_data(blog_content_type)
+    context['yesterday_hot_data'] = get_yesterday_hot_data(blog_content_type)
     context['hot_data_for_7days'] = get_7_days_hot_blogs()
 
     return render(request, 'home.html', context)
@@ -58,3 +58,12 @@ def home(request):
 def login(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
+    user = auth.authenticate(request, username=username, password=password)
+    if user is not None:
+        auth.login(request, user)
+        # redirect a login page
+        return redirect('/')
+
+    else:
+        # return an invalid page
+        return render(request, 'error.html', {'message': '用户名或者密码不正确'})

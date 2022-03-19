@@ -53,14 +53,11 @@
         <ul>
             {% for hot_data in hot_data_for_7days %}
                 <li><a href="{% url 'blog_detail' hot_data.id %}">{{ hot_data.title }}</a>( {{ hot_data.read_num_sum }} )</li>
-                
             {% empty %}
                 <li>7天内暂无热门博客</li>
             {% endfor %}
         </ul>
     </div>
-    
-
     
     <script>
         // 图表配置
@@ -94,4 +91,5 @@
         // 图表初始化函数
         var chart = Highcharts.chart('container', options);
     </script>
+
 {% endblock content %}
