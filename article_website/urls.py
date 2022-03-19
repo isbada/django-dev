@@ -20,13 +20,13 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import views
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     # re_path('`$', views.index),
     path('blog/', include('blog.urls')),
     path('', views.home, name='home'),
     path('ckeditor', include('ckeditor_uploader.urls')),
+    path('login/', views.login, name="login")
 ]
 
 urlpatterns += static('/media/', document_root=settings.MEDIA_ROOT)

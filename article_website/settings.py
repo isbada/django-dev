@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'blog',  # 注册自己编辑的应用
     'read_statistics',
-    
+    'comment',
 ]
 
 MIDDLEWARE = [
@@ -139,4 +139,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CKEDITOR_UPLOAD_PATH = 'upload/'
 
 # 自定义参数
-EACH_PAGE_BLOGS_NUMBER = 7 
+EACH_PAGE_BLOGS_NUMBER = 7
+
+# 缓存设置
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
