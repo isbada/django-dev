@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.core.cache import cache
 from django.contrib import auth
+from django.urls import reverse
 
 
 def get_7_days_hot_blogs():
@@ -59,10 +60,12 @@ def login(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
     user = auth.authenticate(request, username=username, password=password)
+    referer = request.META.get('HTTP_REFERER', reverse('home'))
+
     if user is not None:
         auth.login(request, user)
         # redirect a login page
-        return redirect('/')
+        return redirect(referer)
 
     else:
         # return an invalid page
