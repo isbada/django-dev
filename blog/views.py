@@ -1,3 +1,4 @@
+import django
 from django.shortcuts import get_object_or_404, render
 from .models import Blog, BlogType
 # ReadNum
@@ -9,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from comment.models import Comment
 
 from read_statistics.utils import read_statistics_once_read
+from comment.forms import CommentForm
 
 
 def get_blog_list_common_data(request, blogs_all_list):
@@ -83,6 +85,11 @@ def blog_detail(request, blog_pk):
         create_time__lt=blog.create_time).first()
     context['blog'] = blog
     context['comments'] = comments
+    # django表单设置
+    data = {}
+    data['content_type'] = blog_contet_type.model
+    data['object_id'] = blog_pk
+    context['comment_form'] = CommentForm(initial=data)
 
     response = render(request, 'blog/blog_detail.html', context)
     response.set_cookie(read_cookie_key, 'true')
