@@ -71,12 +71,11 @@ def blog_list(request):
 
 
 def blog_detail(request, blog_pk):
-
     blog = get_object_or_404(Blog, id=blog_pk)
     read_cookie_key = read_statistics_once_read(request, blog)
     blog_contet_type = ContentType.objects.get_for_model(blog)
     comments = Comment.objects.filter(
-        content_type=blog_contet_type, object_id=blog.pk)
+        content_type=blog_contet_type, object_id=blog.pk,parent=None)
 
     context = {}
     context['previous_blog'] = Blog.objects.filter(
@@ -84,11 +83,12 @@ def blog_detail(request, blog_pk):
     context['next_blog'] = Blog.objects.filter(
         create_time__lt=blog.create_time).first()
     context['blog'] = blog
-    context['comments'] = comments
+    context['comments'] = comments.order_by('-comment_time')
     # django表单设置
     data = {}
     data['content_type'] = blog_contet_type.model
     data['object_id'] = blog_pk
+    data['reply_comment_id'] = 0  # 回复id初始化为0
     context['comment_form'] = CommentForm(initial=data)
 
     response = render(request, 'blog/blog_detail.html', context)
@@ -106,7 +106,6 @@ def blogs_with_type(request, blog_type_pk):
 
 
 def blogs_with_date(request, year, month):
-
     blogs_all_list = Blog.objects.filter(create_time__year=year,
                                          create_time__month=month)
     context = get_blog_list_common_data(request, blogs_all_list)

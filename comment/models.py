@@ -12,8 +12,17 @@ class Comment(models.Model):
 
     text = models.TextField()
     comment_time = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, related_name='comments',on_delete=models.DO_NOTHING)
 
+    
+    root = models.ForeignKey('self',null=True,on_delete=models.DO_NOTHING,related_name='root_comment')
+    # 关联到上一级的对象  parent_id = models.IntegerField(default=0)
+    parent = models.ForeignKey('self',null=True,on_delete=models.DO_NOTHING,related_name='parent_comment')
+    reply_to = models.ForeignKey(User,related_name='replies',on_delete=models.DO_NOTHING,null=True)
 
     class Meta:
-        ordering = ['-comment_time']
+        ordering = ['comment_time']
+
+    def __str__(self):
+        return self.text
+
