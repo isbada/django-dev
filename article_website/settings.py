@@ -139,6 +139,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CKEDITOR_UPLOAD_PATH = 'upload/'
 # 评论框的ckeditor设置
 CKEDITOR_CONFIGS = {
+    'default': {}, # 编辑器的配置,不加default会报错
     'comment_ckeditor': {
         'toolbar': 'custom',
         'toolbar_custom':[

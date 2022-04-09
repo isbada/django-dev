@@ -7,6 +7,9 @@
 
 
 {% load staticfiles %}
+{% load comment_tags %}
+
+
 {% block header_extends %}
 <link rel="stylesheet" href="{% static 'blog/blog.css' %}">
 <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
@@ -30,6 +33,7 @@ active
                 <li>分类: <a href="{% url 'blogs_with_type' blog.blog_type.pk %}">{{ blog.blog_type }}</a></li>
                 <li>发表日期: {{ blog.create_time|date:"Y-m-d H:i:s" }}</li>
                 <li>阅读({{ blog.get_read_num }})</li>
+                <li>评论({% get_comment_count blog %})</li>
             </ul>
             <div class="blog-content">{{ blog.content|safe }}</div>
 
@@ -57,17 +61,17 @@ active
         <div class="col-xs-10 col-xs-offset-1">
             <div class="comment-area">
                 <h3 class="comment-area-title">提交评论</h3>
-                {# {{user}} #}
                 {% if user.is_authenticated %}
                 <form id="comment_form" action="{% url 'update_comment' %}" method="POST" style="overflow:hidden">
                     {% csrf_token %}
                     <label for="comment-text">{{ user.username }}, 欢迎评论~</label>
                     <div id="reply_content_container" style="display:none;">
-                        <p>回复: </p>
+                        <p id="reply_title">回复: </p>
                         <div id="reply_content">
                         </div>
                     </div>
                     <!-- {{ comment_form }} -->
+                    {% get_comment_form blog as comment_form %}
                     {% for field in comment_form %}
                         {{ field }}
                     {% endfor %}
@@ -85,6 +89,7 @@ active
             <div class="comment-area">
                 <h3 class="comment-area-title">评论列表</h3>
                 <div id="comment_list">
+                    {% get_comment_list blog as comments %}
                     {% for comment in comments %}
                         <div id="root_{{ comment.pk }}" class="comment">
                             <span>{{ comment.user.username }}</span>
@@ -144,7 +149,7 @@ active
                             //插入评论；
                             var comment_html = '<div id="root_'+ data['pk'] +'" class="comment"> \
                                     <span>'+ data['username'] +'</span> \
-                                        <span>'+ data['comment_time'] +'</span> \
+                                        <span>'+ timeFormat(data['comment_time']) +'</span> \
                                         <div id="comment_'+ data['pk'] +'"> \
                                             '+ data['text'] +' \
                                         </div> \
@@ -153,10 +158,9 @@ active
                             $("#comment_list").prepend(comment_html);
                         }else{
                             //插入回复
-
                             var reply_html = '<div class="reply"> \
                                     <span>'+ data['username'] +'</span> \
-                                    <span>('+ data['comment_time'] +'):</span> \
+                                    <span>('+ timeFormat(data['comment_time']) +'):</span> \
                                     <span> 回复</span> \
                                     <span> '+ data['reply_to'] +'</span> \
                                     <div id="comment_'+ data['pk'] +'"> \
@@ -171,7 +175,8 @@ active
                         $('#reply_content_container').hide();
                         $('#reply_comment_id').val(0);             
                         $('#no_comment').remove();
-                        
+                        // 显示评论成功
+                        $('#comment_error').text('评论成功');
                     }else{
                         // 显示错误信息
                         $('#comment_error').text(data['message']);
@@ -194,6 +199,25 @@ active
             $('html').animate({ scrollTop: $('#comment_form').offset().top - 60 }, 300, function(){ 
                 CKEDITOR.instances['id_text'].focus();
             });
+        };
+
+        function numFormat(num){
+            return ('00'+num).substr(-2);
         }
+        // timeFormat with month and hour, args need product 1000
+        function timeFormat(timeStamp){
+            var date = new Date(timeStamp*1000);
+            var year = date.getFullYear();
+            var month = numFormat(date.getMonth()+1);
+            var day = numFormat(date.getDate());
+            var hour = numFormat(date.getHours());
+            var minute = numFormat(date.getMinutes());
+            var second = numFormat(date.getSeconds());
+            return year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second;
+        }
+         
+            
+
+        
     </script>
 {% endblock script_extends %}

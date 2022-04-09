@@ -6,19 +6,19 @@ from django.contrib.contenttypes.models import ContentType
 
 class Comment(models.Model):
     
-    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
     text = models.TextField()
     comment_time = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, related_name='comments',on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, related_name='comments',on_delete=models.CASCADE)
 
     
-    root = models.ForeignKey('self',null=True,on_delete=models.DO_NOTHING,related_name='root_comment')
+    root = models.ForeignKey('self',null=True,on_delete=models.CASCADE,related_name='root_comment')
     # 关联到上一级的对象  parent_id = models.IntegerField(default=0)
-    parent = models.ForeignKey('self',null=True,on_delete=models.DO_NOTHING,related_name='parent_comment')
-    reply_to = models.ForeignKey(User,related_name='replies',on_delete=models.DO_NOTHING,null=True)
+    parent = models.ForeignKey('self',null=True,on_delete=models.CASCADE,related_name='parent_comment')
+    reply_to = models.ForeignKey(User,related_name='replies',on_delete=models.CASCADE,null=True)
 
     class Meta:
         ordering = ['comment_time']
