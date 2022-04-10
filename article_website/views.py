@@ -9,7 +9,7 @@ Copyright 2021 Tencent All rights reserved.
 
 import imp
 from importlib.metadata import requires
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from read_statistics.utils import get_seven_days_read_data, get_today_hot_data, get_yesterday_hot_data
 from django.contrib.contenttypes.models import ContentType
 from blog.models import Blog
@@ -92,6 +92,18 @@ def login(request):
     context = {}
     context['login_form'] = login_form
     return render(request, 'login.html', context)
+
+
+def login_for_medal(request):
+    login_form = LoginForm(request.POST)
+    data = {}
+    if login_form.is_valid():
+        user = login_form.cleaned_data['user']
+        auth.login(request, user)
+        data['status'] = 'SUCCESS'
+    else:
+        data['status'] = 'ERROR'
+    return JsonResponse(data)
 
 
 def register(request):
