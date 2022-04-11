@@ -5,13 +5,8 @@ from .models import Blog, BlogType
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.db.models import Count
-from datetime import datetime
-from django.contrib.contenttypes.models import ContentType
-from comment.models import Comment
 
 from read_statistics.utils import read_statistics_once_read
-from comment.forms import CommentForm
-from article_website.forms import LoginForm
 
 
 def get_blog_list_common_data(request, blogs_all_list):
@@ -81,7 +76,6 @@ def blog_detail(request, blog_pk):
     context['next_blog'] = Blog.objects.filter(
         create_time__lt=blog.create_time).first()
     context['blog'] = blog
-    context['login_form'] = LoginForm()
 
     # comments + django表单设置 (已经通过自定义标签实现)
 

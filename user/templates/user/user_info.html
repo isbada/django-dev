@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    个人资料
+{% endblock title %}
+
+{% block nav_home_active %}
+    active
+{% endblock nav_home_active %}
+
+{% block content %}
+    <div class="containter">
+        <div class="col-sm-10 col-sm-offset-1">
+            <!-- judge if login -->
+            {% if user.is_authenticated %}
+                <h2>{{ user.username }}</h2>
+                <ul>
+                    <li>
+                        <span>昵称</span>
+                        <a href="#">修改昵称</a>
+                    </li>
+                    <li>
+                        <span>邮箱：</span>
+                        <span>
+                            {% if user.email %}
+                                {{ user.email }}    
+                            {% else %}
+                                未绑定 <a href="#">绑定邮箱</a>
+                            {% endif %}
+                        </span>
+                    </li>
+                    <li>
+                        <span>上一次登录的时间：</span>
+                        <!-- with time filter -->
+                        <span>{{ user.last_login|date:"Y-m-d H:i:s" }}</span>
+                    </li>
+                    <li>
+                        <a href="#">修改密码</a>
+                    </li>
+                </ul>
+
+            {% else %}
+                <span>未登录，跳转到首页...</span>
+                <script type="text/javascript">
+                    window.location.href = "{% url 'home' %}";
+                </script>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock content %}
