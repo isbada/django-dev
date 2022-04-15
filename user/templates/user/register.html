@@ -14,25 +14,32 @@
 {% block content %}
     <div class="containter">
         <div class="col-sm-4 col-sm-offset-4">
+            <!-- judge if login -->
+            {% if not user.is_authenticated %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                    <h3 class="panel-title">注册</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            {% for field in reg_form %}
+                                <label for=" {{ field.id_for_label }} ">{{ field.label }}</label>
+                                {{ field }}
+                                <p class="text-danger" >{{ field.errors.as_text }}</p>
+                            {% endfor %}
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h3 class="panel-title">注册</h3>
+                            <span class="pull-left text-danger">{{ reg_form.non_field_errors }}</span>
+                            <input type="submit" value="登录" class="btn btn-primary pull-right"> 
+                        </form>
+                    </div>
                 </div>
-                <div class="panel-body">
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                        {% for field in reg_form %}
-                            <label for=" {{ field.id_for_label }} ">{{ field.label }}</label>
-                            {{ field }}
-                            <p class="text-danger" >{{ field.errors.as_text }}</p>
-                        {% endfor %}
-
-                        <span class="pull-left text-danger">{{ reg_form.non_field_errors }}</span>
-                        <input type="submit" value="登录" class="btn btn-primary pull-right"> 
-                    </form>
-                </div>
-              </div>
+            {% else %}
+                <span>已经登录，跳转到首页...</span>
+                <script type="text/javascript">
+                    window.location.href = "{% url 'home' %}";
+                </script>
+            {% endif %}
         </div>
     </div>
 
