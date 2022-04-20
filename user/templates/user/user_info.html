@@ -16,8 +16,8 @@
                 <h2>{{ user.username }}</h2>
                 <ul>
                     <li>
-                        <span>昵称</span>
-                        <a href="#">修改昵称</a>
+                        <span>昵称: {{ user.get_nickname }}</span>
+                        <a href="{% url 'change_nickname' %}?from={{ request.get_full_path }}">修改昵称</a>
                     </li>
                     <li>
                         <span>邮箱：</span>
@@ -25,7 +25,8 @@
                             {% if user.email %}
                                 {{ user.email }}    
                             {% else %}
-                                未绑定 <a href="#">绑定邮箱</a>
+                                未绑定 
+                                <a href="{% url 'bind_email' %}?from={{ request.get_full_path }}">绑定邮箱</a>
                             {% endif %}
                         </span>
                     </li>

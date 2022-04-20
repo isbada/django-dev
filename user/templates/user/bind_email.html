@@ -1,0 +1,59 @@
+{% extends 'form.html' %}
+
+
+{% block other_buttons %}
+    <button id="send_code" class="btn btn-primary">发送验证码</button>
+{% endblock other_buttons %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $("#send_code").click(
+            function(){
+                var email = $("#id_email").val();
+                if (email==""){
+                    $("#tip").text('邮箱不能为空');
+                    return false;
+                }
+
+                // 发送验证码
+                $.ajax({
+                    url: "{% url 'send_verification_code' %}",
+                    type: "GET",
+                    data: {
+                        email: email,
+                        // csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    cache: false, //如果true, IE会缓存请求，不会发送新的请求
+                    success: function(data){
+                        // if (data.status=="success"){
+                        //     $("#tip").text('验证码已发送，请注意查收');
+                        // }else{
+                        //     $("#tip").text(data.msg);
+                        // }
+                        if (data.status=="ERROR"){
+                            alert(data['status']);
+                        }
+                    }
+                });
+
+                // 把按钮变灰
+                $("#send_code").addClass("disabled");
+                $("#send_code").attr("disabled", true);
+                // 倒计时30s
+                var time = 30;
+                $("#send_code").text(time+"秒后重新发送");
+                var timer = setInterval(() => {
+                    time--;
+                    $("#send_code").text(time+"秒后重新发送");
+                    if (time<=0){
+                        clearInterval(timer);
+                        $("#send_code").removeClass("disabled");
+                        $("#send_code").attr("disabled", false);
+                        $("#send_code").text("发送验证码");
+                        return false;
+                    }
+                }, 1000);
+            }
+        );
+    </script>
+{% endblock script_extends %}

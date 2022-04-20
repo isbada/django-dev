@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 # re_path支持路径正则
-from django.urls import path, re_path, include
+from django.urls import path , include
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
